@@ -3,6 +3,7 @@ varying vec2 vUv;
 varying vec2 vUv1;
 varying vec4 vPosition;
 varying vec3 vColor;
+varying vec3 vNormal;
 
 uniform vec2 pixels;
 uniform vec2 uvRate1;
@@ -82,16 +83,28 @@ float snoise(vec3 v){
   return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), 
                                 dot(p2,x2), dot(p3,x3) ) );
 }
-
+  vec3 hsv2rgb(vec3 c)
+  {
+      vec4 K = vec4(1.0, 2.0/3.0, 1.0/3.0, 3.0);
+      vec3 p = abs(fract(c.xxx + K.xyz)*6.0 - K.www);
+      return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+  }
 void main() {
 
-  float noise =  snoise(position*5.0);
+  float noise =  snoise(position*7.0 + time/20.0); 
 
-  vColor = vec3(noise);
+  // vec3 newposition = position + normal * noise * 0.1;
+  // vec3 newposition = position*abs(sin(time/10.0);
+  vec3 newposition = position*(noise + 0.5);
+
+
+
+  vColor = hsv2rgb(vec3(noise*0.1 + 0.03 ,0.8, 0.8));
+  vNormal = normal;
 
 
 
 
 
-  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( newposition, 1.0 );
 }

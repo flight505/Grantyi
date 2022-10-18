@@ -1,11 +1,26 @@
 uniform float time;
 varying vec2 vUv;
-varying vec3 vPosition;
+varying vec2 vUv1;
+varying vec4 vPosition;
+
+
 uniform sampler2D texture1;
+uniform sampler2D texture2;
+uniform vec2 pixels;
+uniform vec2 uvRate1;
 float PI = 3.141592653589793238;
+
 void main() {
   vUv = uv;
-  vec4 mvPosition = modelViewMatrix * vec4( position, 1. );
-  gl_PointSize = 1000. * ( 1. / - mvPosition.z );
+
+  vec3 p = position;
+
+  p.y += 0.1*(sin(p.y * 5.0 + time) * 0.5 + 0.5);
+  p.z += 0.05*(sin(p.y * 10.0 + time) * 0.5 + 0.5);
+
+
+
+  vec4 mvPosition = modelViewMatrix * vec4( p, 1. );
+  gl_PointSize = 10.0 * ( 1. / - mvPosition.z );
   gl_Position = projectionMatrix * mvPosition;
 }
